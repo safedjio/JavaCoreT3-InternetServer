@@ -7,8 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger();
@@ -21,13 +23,20 @@ public class Main {
             ExecutorService executorService = Executors.newFixedThreadPool(users.size());
 
             logger.info("Simulation started...");
-            executorService.invokeAll(users);
+            List<Future<Integer>> results = executorService.invokeAll(users);
+
+            int totalMemory = 0;
+
+            for (Future<Integer> future : results) {
+                totalMemory += future.get();
+            }
 
             executorService.shutdown();
-            logger.info("Simulation ended. All users served.");
+            logger.info("Simulation ended. All users served.Total memory used by users: {}", totalMemory);
 
-        } catch (ServerException | InterruptedException e) {
+        } catch (ServerException | InterruptedException | ExecutionException e) {
             logger.error("Simulation failed!", e);
         }
     }
 }
+

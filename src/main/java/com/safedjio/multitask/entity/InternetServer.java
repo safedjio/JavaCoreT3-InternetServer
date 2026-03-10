@@ -9,7 +9,7 @@ public class InternetServer {
     private static final Logger logger = LogManager.getLogger();
 
     private final int maxStorageSize = 1000;
-    private int currentStorageSize = 0;
+    private int currentStorageSize;
 
     private final Semaphore channelSemaphore = new Semaphore(3, true);
     private final ReentrantLock storageLock = new ReentrantLock();
